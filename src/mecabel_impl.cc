@@ -7,13 +7,13 @@ int plugin_is_GPL_compatible;
 /* mecabel_impl functions. */
 
 emacs_value mecabel_impl_test (
-  emacs_env *env, ptrdiff_t nargs, emacs_value *args, void *data) noexcept {
+  emacs_env* env, ptrdiff_t nargs, emacs_value* args, void *data) noexcept {
   return env->make_integer(env, 123);
 }
 
 /* Utility functions. */
 
-static void bind_function(emacs_env *env, const char *name, emacs_value Sfun) {
+static void bind_function(emacs_env* env, const char* name, emacs_value Sfun) {
   emacs_value Qfset = env->intern(env, "fset");
   emacs_value Qsym = env->intern(env, name);
   emacs_value args[] = { Qsym, Sfun };
@@ -21,7 +21,7 @@ static void bind_function(emacs_env *env, const char *name, emacs_value Sfun) {
   env->funcall (env, Qfset, 2, args);
 }
 
-static void provide(emacs_env *env, const char *feature) {
+static void provide(emacs_env* env, const char* feature) {
   emacs_value Qfeat = env->intern(env, feature);
   emacs_value Qprovide = env->intern(env, "provide");
   emacs_value args[] = { Qfeat };
@@ -31,8 +31,8 @@ static void provide(emacs_env *env, const char *feature) {
 
 /* Module init function. */
 
-int emacs_module_init (struct emacs_runtime *ert) {
-  emacs_env *env = ert->get_environment(ert);
+int emacs_module_init (struct emacs_runtime* ert) {
+  emacs_env* env = ert->get_environment(ert);
 
   if (ert->size < sizeof(*ert))
     return 1;
