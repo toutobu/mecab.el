@@ -1039,6 +1039,4 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-/src/boost_1_73_0
-
 ert-profile
