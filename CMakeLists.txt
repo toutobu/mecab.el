@@ -54,8 +54,9 @@ add_subdirectory(
   EXCLUDE_FROM_ALL)
 
 add_executable(test_mecabel test/test_mecabel.cc
-  ${mecabel_include_dirs}/tagger.h)
-target_link_libraries(test_mecabel gtest_main)
+  ${mecabel_include_dirs}/tagger.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/tagger.cc)
+target_link_libraries(test_mecabel gtest_main mecab)
 target_include_directories(test_mecabel PUBLIC
   ${mecabel_include_dirs})
 add_test(NAME test_mecabel COMMAND test_mecabel)
@@ -65,10 +66,12 @@ add_test(NAME test_mecabel COMMAND test_mecabel)
 # Define the mecabel-impl library.
 
 add_library(mecabel_impl SHARED src/mecabel_impl.cc
-  ${mecabel_include_dirs}/tagger.h)
+  ${mecabel_include_dirs}/tagger.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/tagger.cc)
 
 target_include_directories(mecabel_impl PUBLIC
   ${mecabel_include_dirs})
+target_link_libraries(mecabel_impl mecab)
 
 set_target_properties(mecabel_impl PROPERTIES
     VERSION ${PROJECT_VERSION}

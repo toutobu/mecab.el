@@ -23,8 +23,17 @@
 
 (require 'mecabel-impl)
 
-(defun mecab-test ()
-  (print (mecabel-impl-test)))
+(defun mecab-create-tagger (arg)
+  (mecabel-impl-create-tagger arg (string-bytes arg))) ;; size
+
+(defun mecab-parse-to-node (tagger sentence)
+  (mecabel-impl-parse-to-node tagger sentence (string-bytes sentence))) ;;size
+
+(defun mecab-next-node (node)
+  (mecabel-impl-next-node node))
+
+(defun mecab-get-node-value (node key)
+  (mecabel-impl-get-node-value node key (string-bytes key))) ;; size
 
 (provide 'mecab)
 ;;; mecab.el ends here
