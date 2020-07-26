@@ -1,6 +1,8 @@
 #ifndef __MECABEL_TAGGER_H_
 #define __MECABEL_TAGGER_H_
 
+#include <boost/algorithm/string.hpp>
+
 namespace mecabel {
 
 struct tagger {

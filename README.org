@@ -1,7 +1,5 @@
 #+TITLE: mecab.el
 #+EMAIL: p.baleine@gmail.com
 
-* mecab.el
-
-** Description
+* Description
 An Emacs lisp wrapper for the [[https://taku910.github.io/mecab/][MeCab]] morphological analyzer for Japanese text.
