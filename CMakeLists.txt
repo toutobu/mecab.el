@@ -25,6 +25,9 @@ set(BOOST_ROOT
 find_package(Boost ${BOOST_VERSION} REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
+exec_program(mecab-config ARGS --libs OUTPUT_VARIABLE mecab_flags)
+set(mecab_flags "${mecab_flags}" CACHE STRING "MeCab Flags")
+
 ########################################################################
 #
 # Define the mecabel-impl library,
@@ -42,4 +45,5 @@ set_target_properties(mecabel_impl PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION 1
     PREFIX ""
+    LINK_FLAGS ${mecab_flags}
     OUTPUT_NAME "mecabel-impl")

@@ -21,8 +21,7 @@ static void bind_function(emacs_env *env, const char *name, emacs_value Sfun) {
   env->funcall (env, Qfset, 2, args);
 }
 
-static void provide(emacs_env *env, const char *feature)
-{
+static void provide(emacs_env *env, const char *feature) {
   emacs_value Qfeat = env->intern(env, feature);
   emacs_value Qprovide = env->intern(env, "provide");
   emacs_value args[] = { Qfeat };

@@ -2,6 +2,7 @@
 #define __MECABEL_TAGGER_H_
 
 #include <boost/algorithm/string.hpp>
+#include <mecab.h>
 
 namespace mecabel {
 
