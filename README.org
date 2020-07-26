@@ -12,7 +12,7 @@ An Emacs lisp wrapper for the [[https://taku910.github.io/mecab/][MeCab]] morpho
     #+begin_src bash
       sudo apt-get update && sudo apt install libmecab-dev mecab
     #+end_src
-- cmake
+- cmake :: > 3.10.0
 
 * Build
 #+begin_src bash
