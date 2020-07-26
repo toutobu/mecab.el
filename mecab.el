@@ -23,17 +23,31 @@
 
 (require 'mecabel-impl)
 
+(defgroup mecab ()
+  "Customize group for mecab.el."
+  :prefix "mecab-")
+
 (defun mecab-create-tagger (arg)
-  (mecabel-impl-create-tagger arg (string-bytes arg))) ;; size
+  "Create a new Tagger based on `ARG'."
+  (mecabel-impl-create-tagger arg (string-bytes arg)))
 
 (defun mecab-parse-to-node (tagger sentence)
-  (mecabel-impl-parse-to-node tagger sentence (string-bytes sentence))) ;;size
+  "Parse `SENTENCE' with `TAGGER' and return Node object."
+  (mecabel-impl-parse-to-node tagger sentence (string-bytes sentence)))
 
 (defun mecab-next-node (node)
+  "Return next Node of `NODE'."
   (mecabel-impl-next-node node))
 
 (defun mecab-get-node-value (node key)
-  (mecabel-impl-get-node-value node key (string-bytes key))) ;; size
+  "Retrieve the value stored in `NODE' whose key is `KEY'.
+`KEY' must be string."
+  (mecabel-impl-get-node-value node key (string-bytes key)))
+
+(defmacro mecab-node-ref (node key)
+  "Retrieve the value stored in `NODE' whose key is `KEY'."
+  (let ((key-str (with-output-to-string (princ key))))
+    `(mecabel-impl-get-node-value ,node ,key-str (string-bytes ,key-str))))
 
 (provide 'mecab)
 ;;; mecab.el ends here

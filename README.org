@@ -3,3 +3,78 @@
 
 * Description
 An Emacs lisp wrapper for the [[https://taku910.github.io/mecab/][MeCab]] morphological analyzer for Japanese text.
+
+* Prerequisites
+- Emacs :: > 25, this package takes advantage of [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Dynamic-Modules.html#Dynamic-Modules][Emacs Dynamic Modules]]
+   so Emacs is required to be built with =-with-modules= option at
+   configuration time. Also, this package is tested only on Emacs 27.0.60.
+- MeCab :: You can install MeCab on Ubuntu as follows.
+    #+begin_src bash
+      sudo apt-get update && sudo apt install libmecab-dev mecab
+    #+end_src
+- cmake
+
+* Build
+#+begin_src bash
+mkdir build
+cd build
+cmake ..
+cmake --build .
+#+end_src
+
+Then run Emacs:
+
+#+begin_src bash
+EMACSLOADPATH="$EMACSLOADPATH:.:./build" cask emacs
+#+end_src
+
+* Usage
+#+begin_src elisp
+(require 'mecab)
+
+(setq sentence "なんだって円錐の立方積なんぞを計算し出したのだ")
+
+(let* ((tagger (mecab-create-tagger ""))
+       (node (mecab-parse-to-node tagger sentence)))
+  (while node
+    (let ((surface (mecab-node-ref node surface))
+          (feature (mecab-node-ref node feature)))
+      (message (format "%s: %s" surface feature))
+      (setq node (mecab-next-node node)))))
+
+;; => 	BOS/EOS,*,*,*,*,*,*,*,*
+;; なん	名詞,代名詞,一般,*,*,*,なん,ナン,ナン
+;; だって	助詞,副助詞,*,*,*,*,だって,ダッテ,ダッテ
+;; 円錐	名詞,一般,*,*,*,*,円錐,エンスイ,エンスイ
+;; の	助詞,連体化,*,*,*,*,の,ノ,ノ
+;; ...
+#+end_src
+
+=mecab-enhanced.el= includes utilty functions.
+
+#+begin_src elisp
+(require 'mecab-enhanced)
+
+(let* ((sentence "なんだって円錐の立方積なんぞを計算し出したのだ")
+       (iter (mecab-enhanced-parse-to-iter sentence)))
+  (cl-loop for x iter-by iter
+	   collect (list (oref x surface) (oref x pos))))
+
+;; => (("" "BOS/EOS") ("なん" "名詞") ("だって" "助詞")
+;;  ("円錐" "名詞") ("の" "助詞") ("立方" "名詞")
+;;v ("積" "名詞") ("なんぞ" "助詞") ("を" "助詞")
+;;  ("計算" "名詞") ("し" "動詞") ("出し" "動詞") ...)
+#+end_src
+
+* Test
+#+begin_src bash
+cd build
+./test_mecabel
+
+cd ..
+EMACSLOADPATH="$EMACSLOADPATH:.:./build" cask exec ert-runner
+#+end_src
+
+* License
+
+MIT

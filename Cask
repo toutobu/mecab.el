@@ -2,6 +2,9 @@
 (source melpa)
 
 (package-file "mecab.el")
+(package-file "mecab-enhanced.el")
+
+(depends-on "s")
 
 (development
  (depends-on "f")
