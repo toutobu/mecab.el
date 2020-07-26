@@ -10,7 +10,8 @@ An Emacs lisp wrapper for the [[https://taku910.github.io/mecab/][MeCab]] morpho
    configuration time. Also, this package is tested only on Emacs 27.0.60.
 - MeCab :: You can install MeCab on Ubuntu as follows.
     #+begin_src bash
-      sudo apt-get update && sudo apt install libmecab-dev mecab
+      sudo apt-get update && \
+        sudo apt install libmecab-dev mecab mecab-ipadic-utf8
     #+end_src
 - cmake :: > 3.10.0
 
