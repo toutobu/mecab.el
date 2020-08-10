@@ -25,7 +25,8 @@
 
 (defgroup mecab ()
   "Customize group for mecab.el."
-  :prefix "mecab-")
+  :prefix "mecab-"
+  :group 'lisp)
 
 (defun mecab-create-tagger (arg)
   "Create a new Tagger based on `ARG'."
