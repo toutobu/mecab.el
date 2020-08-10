@@ -26,7 +26,8 @@
 
 (defgroup mecab-enhanced ()
   "Customize group for mecab-enhanced.el."
-  :prefix "mecab-enhanced-")
+  :prefix "mecab-enhanced-"
+  :group 'mecab)
 
 (defclass mecab-enhanced-node ()
   ((surface
@@ -63,23 +64,40 @@
     :documentation "Original form(原形).")
    (ruby
     :initarg :ruby
-    :type string
     :documentation "Ruby(読み).")
    (pronounciation
     :initarg :pronounciation
-    :type string
-    :documentation "Pronounciation(発音).")))
+    :documentation "Pronounciation(発音).")
+   (offsets
+    :initarg :offsets
+    :type cons
+    :documentation "Offset of this node.")))
 
-
-(iter-defun mecab-enhanced-parse-to-iter (sentence &optional tagger)
+(iter-defun mecab-enhanced-parse-to-iter
+  (sentence &optional tagger preserve-newline-offset)
   "Return an iterator that iterates on parsed result of `SENTENCE'.
-It yields `MECAB-ENHANCED-NODE' objects."
+It yields `MECAB-ENHANCED-NODE' objects.
+If `TAGGER' is specified, `SENTENCE' will be parsed by `TAGGER'.
+If `PRESERVE-NEWLINE-OFFSET' is specified, offsets for newlines are preserved.
+"
   (let* ((tagger (or tagger (mecab-create-tagger "")))
-         (node (mecab-parse-to-node tagger sentence)))
+         (node (mecab-parse-to-node tagger sentence))
+         (offset 0)
+         (newline-offsets
+          (and preserve-newline-offset
+               (mecab-enhanced--gather-newline-offsets sentence)))
+         (current-newline-offset
+          (and preserve-newline-offset (pop newline-offsets))))
     (while node
+      (if (and preserve-newline-offset
+               (eq offset (car current-newline-offset)))
+          (progn
+            (setq offset (cdr current-newline-offset))
+            (setq current-newline-offset (pop newline-offsets))))
       (let* ((surface (mecab-node-ref node surface))
              (feature (mecab-node-ref node feature))
-             (feature-lst (s-split "," feature)))
+             (feature-lst (s-split "," feature))
+             (offset-end  (+ (length surface) offset)))
         (iter-yield
          (make-instance 'mecab-enhanced-node
           :surface surface
@@ -91,8 +109,27 @@ It yields `MECAB-ENHANCED-NODE' objects."
           :conjugation-form (nth 5 feature-lst)
           :original-form (nth 6 feature-lst)
           :ruby (nth 7 feature-lst)
-          :pronounciation (nth 8 feature-lst)))
-        (setq node (mecab-next-node node))))))
+          :pronounciation (nth 8 feature-lst)
+          :offsets (cons offset offset-end)))
+        (setq node (mecab-next-node node))
+        (setq offset offset-end)))))
+
+;; utils
+
+(cl-defun mecab-enhanced--gather-newline-offsets (sentence)
+  "Return list of offsets of newlines in `SENTENCE'."
+  (let ((newline-offsets '())
+        (op 0))
+    (with-temp-buffer
+      (insert sentence)
+      (setq op (goto-char (point-min)))
+      (while (re-search-forward "[\s\n]" nil t)
+        (let* ((s (1- (match-beginning 0)))
+               (e (1- (match-end 0)))
+               (offset (cons s e)))
+          (setq newline-offsets (append newline-offsets (list offset)))
+          (setq op (goto-char (match-end 0))))))
+    newline-offsets))
 
 (provide 'mecab-enhanced)
 ;;; mecab-enhanced.el ends here
