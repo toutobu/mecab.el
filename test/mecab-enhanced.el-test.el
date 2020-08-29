@@ -78,6 +78,7 @@
 (ert-deftest mecab-enhanced-test--mecab-enhanced-parse-to-iter--offsets ()
   (let* ((sentence "「して見ると、巡査が虎で、我々三人が酔人だね」と、岡田が冷かした。
 「Silentium !」と石原が叫んだ。  もう無縁坂の方角へ曲る角に近くなったからである。
+
 角を曲れば")
          (iter (mecab-enhanced-parse-to-iter sentence nil t))
          (x (iter-next iter)))
@@ -131,6 +132,6 @@
     (cl-loop for i from 0 to 23 do (setq x (iter-next iter)))
 
     (should (string= (oref x surface) "角"))
-    (should (equal (oref x offsets) '(80 . 81)))))
+    (should (equal (oref x offsets) '(83 . 84)))))
 
 ;;; mecab-enhanced.el-test.el ends here

@@ -85,32 +85,30 @@ If `PRESERVE-NEWLINE-OFFSET' is specified, offsets for newlines are preserved.
          (offset 0)
          (newline-offsets
           (and preserve-newline-offset
-               (mecab-enhanced--gather-newline-offsets sentence)))
-         (current-newline-offset
-          (and preserve-newline-offset (pop newline-offsets))))
+               (mecab-enhanced--gather-newline-offsets sentence))))
     (while node
-      (if (and preserve-newline-offset
-               (eq offset (car current-newline-offset)))
-          (progn
-            (setq offset (cdr current-newline-offset))
-            (setq current-newline-offset (pop newline-offsets))))
+      (when preserve-newline-offset
+        (let (current-newline-offset)
+          (while (setq current-newline-offset
+                       (--find (eq offset (car it)) newline-offsets))
+            (setq offset (cdr current-newline-offset)))))
       (let* ((surface (mecab-node-ref node surface))
              (feature (mecab-node-ref node feature))
              (feature-lst (s-split "," feature))
              (offset-end  (+ (length surface) offset)))
         (iter-yield
          (make-instance 'mecab-enhanced-node
-          :surface surface
-          :pos (nth 0 feature-lst)
-          :sub-pos1 (nth 1 feature-lst)
-          :sub-pos2 (nth 2 feature-lst)
-          :sub-pos3 (nth 3 feature-lst)
-          :conjugation-type (nth 4 feature-lst)
-          :conjugation-form (nth 5 feature-lst)
-          :original-form (nth 6 feature-lst)
-          :ruby (nth 7 feature-lst)
-          :pronounciation (nth 8 feature-lst)
-          :offsets (cons offset offset-end)))
+                        :surface surface
+                        :pos (nth 0 feature-lst)
+                        :sub-pos1 (nth 1 feature-lst)
+                        :sub-pos2 (nth 2 feature-lst)
+                        :sub-pos3 (nth 3 feature-lst)
+                        :conjugation-type (nth 4 feature-lst)
+                        :conjugation-form (nth 5 feature-lst)
+                        :original-form (nth 6 feature-lst)
+                        :ruby (nth 7 feature-lst)
+                        :pronounciation (nth 8 feature-lst)
+                        :offsets (cons offset offset-end)))
         (setq node (mecab-next-node node))
         (setq offset offset-end)))))
 
